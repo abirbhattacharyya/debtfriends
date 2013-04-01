@@ -1,0 +1,49 @@
+<% 
+company_users = [];
+@company_users.each_with_index do |user_account, i|
+	offer = Offer.find(:last, :conditions=>["user_id = ? && user_account_id = ?",user_account.user_id,user_account.id])
+	company_users << [user_account, offer] if offer.status.to_i == 1
+end 
+%>
+<h1>Here is your list of accepted agreements & final offers</h1>
+<%= render :partial => "/partials/user_dashboard" %>
+
+<% if company_users.empty? %>
+	<p>You have no agreements yet, please come back soon!</p>
+<% else %>
+ 	<div id="consumers_list">
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th><%=link_to("Company Name", "javascript:void();") %></th>
+          <th><%=link_to("Account Number", "javascript:void();")%></th>
+          <th><%=link_to("Balance", "javascript:void();") %></th>
+          <th>Action</th>
+        </tr>
+        <% company_users.each_with_index do |company_user, i|%>
+			<% user_account = company_user[0] %>
+			<% offer = company_user[1] %>
+            <tr id="feed_<%=user_account.id%>">
+                <td><%= user_account.company_name %></td>
+                <td><%= user_account.account_no %></td>
+
+                <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+                <td>
+					<% status_msg = "Final Offer" %>
+                    <% if offer.status.to_i == 2 %>
+					  <% status_msg = "Rejected" %>
+                    <% elsif offer.status.to_i == 1 %>
+                      <% if offer.payment %>
+                        <% if !offer.payment.transaction_id.nil? && offer.payment.status.to_i == 1 %> 
+					  	 <% status_msg = "Paid" %>
+                        <% end %> 
+                      <% end %>    
+                    <% else %>
+					  	<% status_msg = link_to("Negotiate",url_for(:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz")) %>
+                    <% end %>
+					<%= status_msg %>
+                </td>
+            </tr>
+        <% end %>
+      </table>
+	</div>
+<% end %>

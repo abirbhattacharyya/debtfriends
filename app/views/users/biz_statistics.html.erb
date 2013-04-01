@@ -1,0 +1,49 @@
+
+<%= render :partial => "/partials/user_dashboard" %>
+<h1 id="heading"><%=@page_title %></h1> 
+<% if (@company_users.size + @total_debt.ceil + @total_dettled_in_percentage + @average_settlement_percentage) == 0 %>
+  <h2>No data yet.</h2>
+<% else %>  
+  <h2>Table 1 : Your Portfolio on Debtfriends</h2>
+  <table border="1" class="t_border" width="70%" id="">
+    <tr>
+      <th>
+        # Of Total Accounts
+      </th>
+      <th>
+        Total Original Receivables ($)
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <%= number_with_delimiter(@company_users.size) %>
+      </td>
+      <td>
+        <%= number_with_delimiter(@total_debt.ceil) %>
+      </td>  
+
+    </tr>
+  </table>
+
+  <h2>Table 2 : Your Settlement Statistics on Debtfriends</h2>
+  <table border="1" class="t_border" width="70%" id="">
+    <tr>
+      <th>
+        % Accounts Settled
+      </th>
+      <th>
+        Average Settlement %
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <%= number_with_delimiter(@total_dettled_in_percentage.round(2)) %>
+      </td>
+      <td>
+        <%= number_with_delimiter(@average_settlement_percentage.round(2)) %>
+      </td>  
+
+    </tr>
+  </table>
+<% end %>  
+

@@ -1,0 +1,44 @@
+<% if logged_in?  %>
+  <h1>Here are a list of your accounts & debt settlement status</h1>
+  <%# if @first_offer %>
+    <%#= render :partial => "/users/first_offer" %>
+  <%# else %>
+    <%= render :partial => "/partials/user_dashboard" %>
+  <%# end %>
+
+
+  <%#= render :partial => "/partials/bofa_account" %>
+  <%= render :partial => "/partials/account_list" %>
+<% else %>
+    <h1>Want to save money & hassles, by settling old debts?</h1>
+
+    <div class="preface">
+        <div class="column first">
+
+            <h2>No Upfront Fees To You</h2>
+            <p>Securely sign-up & enter any type of debt. No upfront or monthly fees. We help you make reasonable settlement offers. Companies pay us a %-once you reach a successful settlement.</p>
+
+        </div><!-- .column -->
+        <div class="column second">
+
+            <h2>Stop Collection Calls</h2>
+            <p>Keep updating your info & enjoy the Stop Calls protection. We never share your address & phone with people you owe money to. Deal online & avoid telephone confrontations.</p>
+
+        </div><!-- .column -->
+    </div>
+
+    <h1>We NEVER share your personal information with lenders!</h1>
+
+    <div class="sbox slides">
+        <div class="sinner">
+
+           <%= link_to image_tag('banner.jpg', :style=>"width:800px !important"),login_path %>
+        </div><!-- .sinner -->
+        <div class="stl"></div><div class="str"></div>
+        <div class="sbl"></div><div class="sbr"></div>
+    </div><!-- .sbox -->
+
+    <p class="ctrl actions" align="right">
+        <span class="button green"><input type="button" name="" value="Login or Sign-Up" onclick="window.location.href='/login'"></span>
+    </p>
+<% end %>

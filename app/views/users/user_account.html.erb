@@ -1,0 +1,60 @@
+<%= content_tag(:h1, (current_user ? "Please tell us all information accurately.<a href='../images/add_account.jpg' target='_blank'> (Use This Example)</a>" : "Tell us your business profile")) %>
+
+<%#= error_messages_for(:profile, :order => [:name, :web_url, :address1, :address2, :city, :state, :zip, :phone, :email, :twitter_id], :message => "", :header_message => "")%>
+<%#= error_messages_for(:profile)%>
+<% form_for :user_account, :url => create_user_account_path(params[:commit]), :html => {:multipart => true} do |f| %>
+<p class="ctrl">
+    After you enter, we will make offers to companies, to settle your debt for less!
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:company_name, "Name of Company I owe the money to") %>
+      <%= f.text_field :company_name %>
+      <%#= content_tag(:span, "#{content_tag(:span, (@user_profile ? 40-@user_profile.name.length : 40), :id => "name_counter")}", :class => "alter-link") %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:phone, "Company's Phone #") %>
+      <%= f.text_field :phone,:maxlength=>14,:size=>30,:onKeyPress => "return keyAllowed(event,'0123456789.-()')" %>
+      <%#= content_tag(:span, "#{content_tag(:span, (@user_profile ? 40-@user_profile.name.length : 40), :id => "name_counter")}", :class => "alter-link") %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:account_no, "My Account # With Them") %>
+      <%= f.text_field :account_no %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:amount, "Amount I owe (Whole $)") %>
+      <%= f.text_field :amount, :onKeyPress => "return keyAllowed(event,'0123456789.-()')",:maxlength=>9,:size=>30, :onKeyUp => "isNumber(this);" %>
+  </p>
+  <p class="ctrl">
+    <%= label_tag(:debt_period, "I last paid (appx.)") %>
+    <%= f.select :debt_period,UserAccount.pay_debt_order %>
+  </p>
+
+  <p class="ctrl">
+  	
+     <% if current_user.user_accounts.blank? %>
+       <%= f.check_box :term_condition%>
+       <%= link_to "I agree to Terms & Conditions",terms_path,:target=>"_blank" %>
+     <% end %>  
+   
+  </p>
+  <p class="ctrl actions">
+      <span class="button green">
+        <%#= f.submit("Add Another Account") %>
+        <button name="add_account" value="add account" type="submit">Add Another Account</button>
+      </span>
+      <%#= link_to("Cancel", "javascript:history.back();", :class => "alter") if current_user.profile%>
+      <span class="button red"><%= f.submit("Finish") %></span>
+  </p>
+
+
+
+<% end %>
+
+
+
+
+
+
+
+
+

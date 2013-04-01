@@ -1,0 +1,19 @@
+.logo {
+    background: url("/images/df_logo.png") no-repeat scroll left top transparent;
+    float: left;
+    height: 53px;
+    margin: 16px 0 0 55px;
+    text-indent: -999px;
+    width: 262px;
+}
+.about ul {
+ list-style: initial !important;
+ padding-left:25px !important;
+}
+.about li{
+padding: 10px !important;
+}
+
+.help td {
+ padding-left:5px !important;
+}

@@ -1,0 +1,14 @@
+<%= content_tag(:h1, "Please select the company that you are collecting for") %>
+
+<% form_for :biz_company, :url => biz_dashboard_path, :html => {} do || %>
+
+  <p class="ctrl">
+    <%= label_tag(:company_name, "Company") %>
+    <%= select :biz_user,:company_name,@all_company %>
+  </p>
+
+  <div style="height:40px;"></div>
+  <span class="button green"><%= submit_tag("Go!") %></span>
+
+<% end %>
+

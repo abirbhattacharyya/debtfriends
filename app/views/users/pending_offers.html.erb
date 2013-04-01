@@ -1,0 +1,37 @@
+<h1>Here are a list of your pending accounts
+</h1>
+  <%= render :partial => "/partials/user_dashboard" %>
+<% if current_user.user_accounts %>
+  <% if current_user.user_accounts.size > 0 %>
+     <div id="consumers_list">
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th><%=link_to("Company Name", "javascript:void();") %></th>
+          <th><%=link_to("Account Number", "javascript:void();")%></th>
+          <th><%=link_to("Balance", "javascript:void();") %></th>
+          <th>Action</th>
+        </tr>
+        <% @pending_offers.each_with_index do |pending_offer, i|%>
+          <% if pending_offer.user_account %>
+          <tr id="feed_<%=pending_offer.user_account%>">
+
+              <td><%= pending_offer.user_account.company_name %></td>
+              <td>
+              	<%= pending_offer.user_account.account_no %>
+              </td>
+
+              <td><%= number_to_currency(pending_offer.amount, :unit =>"&#36;", :precision => ((pending_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+              <td>
+              	<%= link_to "Negotiate",:controller=>"users",:action=>"show_account",:id=>pending_offer.user_account.id %>
+              	<%#= link_to_remote("Delete", :url => {:controller => :users, :action => :destroy_feed, :id => feed.id}, :confirm => "Are you sure?") %>
+              </td>
+          </tr>
+         <% end %> 
+        <% end %>
+      </table>
+      
+  <% else %>
+    <b>No Data Found</b>
+  <% end %>
+    </div>
+<% end %>

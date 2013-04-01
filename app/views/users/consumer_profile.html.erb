@@ -1,0 +1,40 @@
+<%= content_tag(:h1, (current_user ? "Your contact information is safe,we will never share it with collectors" : "Tell us your business profile")) %>
+
+<% form_for :profile, :url => profile_create_path(params[:id]), :html => {:multipart => true} do |f| %>
+<% if @profile %>
+  <%= hidden_field_tag(:user_profile_id, @profile.id) %>  
+  <p class="ctrl" style="margin-top:-12px;margin-bottom:20px;">
+    When you update your contact information regularly - we can offer you a No Collection Calls protection - for the creditors participating in this program. This means you can save up to 50% by settling your debts and not experience the hassle of calls.
+  </p>
+<% else %>
+  <p class="ctrl">
+    Please update your info accurately to continue with Stop Collections Calls
+  </p>
+<% end %>
+
+  <p class="ctrl">
+      <%= label_tag(:first_name, "My First Name") %>
+      <%= f.text_field :first_name, :class => "w180px",:onKeyPress => "return keyAllowed(event,'#{("a".."z").to_a*""}#{("A".."Z").to_a*""}')" %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:last_name, "My Last Name") %>
+      <%= f.text_field :last_name, :class => "w180px",:onKeyPress => "return keyAllowed(event,'#{("a".."z").to_a*""}#{("A".."Z").to_a*""}')" %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:phone, "My Home or Cell Phone #") %>
+      <%= f.text_field :phone, :maxLength => 14, :class => "w180px", :onKeyPress => "return keyAllowed(event,'0123456789.-()')" %>
+  </p>
+  <p class="ctrl">
+      <%= label_tag(:ssn, "Last 4 Of Social Security #") %>
+      <%= f.text_field :ssn, :maxLength => 4, :class => "w180px", :onKeyPress => "return keyAllowed(event,'0123456789')" %>
+  </p>
+  <p class="ctrl">
+    <%= label_tag(:birthdate, "My Birthdate") %>
+	  <%= f.text_field :birthdate, :readonly=>true, :class => "w180px" %>
+  </p>
+  <p class="ctrl actions">
+      <span class="button green"><%= f.submit("Go!") %></span>
+  </p>
+
+<% end %>
+

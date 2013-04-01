@@ -1,0 +1,10 @@
+<% flash.each do |name, msg| %>  
+  <%= content_tag :div, msg,:id => "flash_#{name}" %>      
+<% end %>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#flash_notice').delay(5000).fadeOut();
+	  $('#flash_error').delay(5000).fadeOut();
+	})
+</script>

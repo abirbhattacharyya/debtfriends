@@ -1,0 +1,3 @@
+<%= select_tag :month1, options_for_select(month_options.collect {|i| [User::MONTH_NAMES[i-1], i]},@month.to_i), {:onchange => "new_change_days(this.value);"} %>
+<span id="days1"><%= select_tag :day1, options_for_select(@day_range.collect {|i| [i, i]}) %></span>
+<%= select_tag :year1, options_for_select((year_options).each {|i| i}, @year) %>

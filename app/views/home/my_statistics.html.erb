@@ -1,0 +1,51 @@
+<%= render :partial => "/partials/user_dashboard" %>
+<!--
+<h1>Look at your cool analytics!(<%= @page %> of <%= @size %>)</h1>
+-->
+<% if @all_debts.size + @all_offers.size + @save_amount_in_percentage + @save_amount_in_dollar.ceil == 0 %>
+  <h2>No data yet.</h2>
+ <% else %> 
+  <h2><%= @chart_h1_title %></h2>
+   <table border="1" class="t_border" width="70%" id="">
+    <tr>
+      <th>
+        # Of Debts
+      </th>
+      <th>
+        # Of Offers
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <%= number_with_delimiter(@all_debts.size) %>
+      </td>
+      <td>
+        <%= number_with_delimiter(@all_offers.size) %>
+      </td>  
+
+    </tr>
+   </table>
+
+  <h2><%= @chart_h2_title %></h2>
+   <table border="1" class="t_border" width="70%" id="">
+    <tr>
+      <th>
+        % Savings over original debt
+      </th>
+      <th>
+        $ Savings over original debt
+      </th>
+    </tr>
+    <tr>
+      <td>
+        <%= number_with_delimiter(@save_amount_in_percentage.round(3)) %>
+      </td>
+      <td>
+        <%= number_with_delimiter(@save_amount_in_dollar.ceil) %>
+      </td>  
+
+    </tr>
+   </table>
+  <% end %> 
+
+

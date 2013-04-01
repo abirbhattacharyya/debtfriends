@@ -1,0 +1,45 @@
+<%= render :partial => "/partials/user_dashboard" %>
+<h1>Here are your agreements - remember payment on debtfriends is optional</h1>
+<% if @active_offers.blank? %>
+  <p>Right now, you have no agreements. Please enter more debts & or <br>initiate settlement offers to see results.
+  </p>
+<% else %>  
+<% if current_user.user_accounts %>
+  <% if current_user.user_accounts.size > 0 %>
+     <div id="consumers_list">
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th><%=link_to("Company Name", "javascript:void();") %></th>
+          <th><%=link_to("Account Number", "javascript:void();")%></th>
+          <th><%=link_to("Balance", "javascript:void();") %></th>
+          <th>Action</th>
+        </tr>
+        <% @active_offers.each_with_index do |active_offer, i|%>
+          <tr id="feed_<%=active_offer.id%>">
+              <td><%= active_offer.user_account.company_name %></td>
+              <td>
+              	<%= active_offer.user_account.account_no %>
+              </td>
+
+              <td><%= number_to_currency(active_offer.amount, :unit =>"&#36;", :precision => ((active_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+              <td>
+                <% if active_offer.payment %>
+                  <% if active_offer.payment.status.to_i == 0 %>
+                    <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
+                  <% else %>
+                     <%= "Paid" %>
+                  <% end %>  
+                <% else %>
+                  <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
+                <% end %>
+              </td>
+          </tr>
+        <% end %>
+      </table>
+      
+  <% else %>
+    <b>No Data Found</b>
+  <% end %>
+    </div>
+ <%end %>   
+<% end %>

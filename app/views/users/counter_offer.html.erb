@@ -1,0 +1,91 @@
+<div class="page-columns">
+    <div class="column half">
+
+        <div class="rounded">
+            <div class="info mh240px">
+                 <p class="param">
+                    <!--<label>This settlement is in process for your account #:</label> !-->
+                    <label><%= @latest_offer.user_account.company_name.camelize %> made another offer, for account #:</label>
+                    <span><%= @latest_offer.user_account.account_no %></span>
+                </p>
+
+                <p class="param">
+
+                    <lable>Original amount due :</lable>
+                    <span><%= number_to_currency(@latest_offer.user_account.amount, :precision => ((@latest_offer.user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <p class="param">
+                    <label>Starting Offer :</label>
+                    <span><%= number_to_currency(@system_offer.amount, :precision => ((@system_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <p class="param">
+                    <label>Current Offer :</label>
+                    <span><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+
+                <div class="info mh50px">
+                </div>
+                
+            </div><!-- .info -->
+
+            <div style="height: 23px;"></div>
+            <div class="info mh50px">
+            You can choose to accept the current offer of the company you owe money to, or continue to negotiate - Your choice
+            </div>
+            <div class="foot"></div>
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+    <div class="column half">
+
+        <div class="rounded blue">
+            <% form_tag biz_negotiate_path, :id => "negotiate_form" do %>
+            <%= hidden_field_tag :submit_button, "offer" %>
+            <div class="info mh300px">
+              <div>
+                <h3>Want to accept the company's current offer?</h3>
+                
+                <p class="param">
+                    <label>Current Settlement Offer:</label>
+                    <span><b><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></b></span>
+                    <label style="display: none">Or <%#= @feed.payment_term %> monthly payments of:</label>
+                    <span style="display: none"><b><%#= number_to_currency((@counter_offer.amount/@feed.payment_term), :precision => (((@counter_offer.amount/@feed.payment_term).to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></b></span>
+                </p>
+              </div><!-- .info -->
+              <div class="controls">
+                  <span class="button green on-blue">
+                    <%= link_to "Yes", "javascript:void();", :onclick =>"var f = document.forms['negotiate_form'];jQuery('#submit_button').val('yes');f.submit();" %>
+                </span>
+                  <span class="button green on-blue">
+                    <%= link_to("No", "javascript:void();",:id=>"no", :onclick => "var f = document.forms['negotiate_form'];jQuery('#submit_button').val('no');f.submit();return false;") %>
+                </span>
+
+
+              </div><!-- .controls -->
+
+              <div id="new_offer_div">
+                <div>
+                  <h3><%#= @feed.first_name %> <%#= @feed.last_name %> I want to make a higher offer</h3>
+                  <p class="param">
+                      <label>My New Offer($)</label>
+                      <span><%= text_field_tag :offer, "", :onChange => "changeoffer(this.value);", :onKeyPress => "return keyAllowed(event, '0123456789');", :onKeyUp => "isNumber(this);" %></span>
+                  </p>
+                   <%= hidden_field_tag :current_account_id,@latest_offer.user_account.id %>
+
+                  <p class="param" style="display: none">
+                      <label><%#= @feed.payment_term %> monthly payments of.</label>
+                      <span><%#= text_field_tag :monthly_offer, "", :disabled => true, :class => "disabled" %></span>
+                  </p>
+                </div><!-- .info -->
+                <div class="controls">
+                  <span class="button green on-blue"><%= submit_tag("Counter Offer", :onclick => "$('submit_button').value='offer'") %></span>
+              </div><!-- .controls -->
+
+              </div>
+                             </div> 
+             <% end %>
+            <div class="foot"></div>
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+</div><!-- .columns -->

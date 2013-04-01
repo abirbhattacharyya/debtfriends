@@ -1,0 +1,58 @@
+<%= render :partial => "/partials/user_dashboard" %>
+
+<h1 id="heading"><%=@page_title %></h1>
+  <!--<div class="sbox w640px"> !-->
+      <!--<div class="sinner">
+
+          <%# visualization "chart_id2", "ColumnChart", :colors => @colors, :is3D => true,:title => @title, :width => 635, :height => 300, :legend => "none" do |chart| %>
+              <%# chart.string @titleX %>
+              <%# chart.number @titleY %>
+              <%# chart.add_rows(@chart_data1) %>
+          <%# end %>
+      </div><!-- .sinner -->
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th>
+            # Of Total Accounts
+          </th>
+          <th>
+            Total Original Receivables ($)
+          </th>
+        </tr>
+        <tr>
+          <td>
+            <%= @company_users.size %>
+          </td>
+          <td>
+            <%= number_with_delimiter(@total_debt.ceil) %>
+          </td>  
+
+        </tr>
+      </table>
+      <div class="stl"></div><div class="str"></div>
+      <div class="sbl"></div><div class="sbr"></div>
+  <!--</div><!-- .column50prc --> 
+
+
+<% if @chart_data1 and @chart_data1.size > 0 %>
+  <% form_tag biz_statistics_path, :id => "submit_form", :style => "display:none;" do %>
+    <%= hidden_field_tag(:page, @page) %>
+  <% end %>
+<% end %>
+
+  <div class="paginator w650px">
+      <% if @page.to_i != @post_pages %>
+          <% if(@page.to_i <= 1)%>
+              <%= link_to("Next #{@per_page}", "javascript:void();", :class => "button next", :onclick => "var f = document.forms['submit_form'];jQuery('#page').val(2);f.submit();return false;") %>
+          <% else %>
+              <%= link_to("Prev #{@per_page}", "javascript:void();", :class => "button prev", :onclick => "var f = document.forms['submit_form'];jQuery('#page').val(#{@page.to_i-1});f.submit();return false;") %>
+              <%= link_to("Next #{@per_page}", "javascript:void();", :class => "button next", :onclick => "var f = document.forms['submit_form'];jQuery('#page').val(#{@page.to_i+1});f.submit();return false;") %>
+          <% end %>
+      <% elsif @page.to_i > 1 %>
+          <%= link_to("Prev #{@per_page}", "javascript:void();", :class => "button prev", :onclick => "var f = document.forms['submit_form'];jQuery('#page').val(#{@page.to_i-1});f.submit();return false;"); %>
+      <% end -%>
+  </div>
+
+
+<%= render_visualizations %>
+

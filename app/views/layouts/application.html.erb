@@ -1,0 +1,156 @@
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+
+    <%= javascript_include_tag "jquery-1.9.0", "jquery-ui-1.10.0.custom" %>
+    <%= stylesheet_link_tag "jquery-ui-1.10.0.custom", :cache => "main" %>
+
+   
+
+    <script>
+
+     jQuery(function() {
+        jQuery("#profile_birthdate").datepicker({
+          yearRange : '1915:1996',
+          changeMonth: true,
+          changeYear: true,
+          dateFormat: 'mm/dd/yy',
+          defaultDate: new Date(1915,5, 1)
+          });
+      });
+    </script>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="" />
+    <meta name="description" content="">
+
+    <link rel="icon"  type="image/png" href="/images/favicon.ico" />
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <title>Settle your debts & save with Debtfriends</title>
+    <%= stylesheet_link_tag "debt_friends", "reset", "global","notification", :cache => "main" %>
+
+  
+    <%= javascript_include_tag "application", "global" %>
+
+    <%= javascript_include_tag "jquery.bar" %>
+
+    <%#= javascript_include_tag "jquery-1.4.2" %>
+    <%#= javascript_include_tag "jcarousellite_1.0.1c4" %>
+    <%= include_visualization_api %>
+    <%= render_visualizations %>
+    <%= yield :head %>
+  </head>
+
+  <body>
+    <%= content_tag(:div, nil, :id => "notification", :class => "message-notification") %>
+    <div id="layout">
+        <div id="header">
+            <a class="logo" href="/">ACME Bank</a>
+            
+            <ul>
+                <%#= content_tag(:li, link_to('Home', root_path)) if request.path != root_path %>
+                <%# unless request.path == "/login" || request.path == "/biz" %>
+                  <% if current_user %>
+                    <% if current_user.biz? %>
+                      <%= content_tag(:li, link_to("Home", biz_dashboard_path), :class => ([biz_dashboard_path].include? request.path) ? "current" : nil) %>
+                    <% else %>  
+                      <%= content_tag(:li, link_to("Home", root_path), :class => ([root_path].include? request.path) ? "current" : nil) %>
+                   <% end %>
+                  <%else %> 
+                    <%= content_tag(:li, link_to('Home', root_path)) if request.path != root_path %>
+                    <%# if request.path == "/login" %>
+                      <%#= content_tag(:li, link_to("Home", root_path), :class => ([root_path].include? request.path) ? "current" : nil) %>
+                    <%# elsif request.path == "/biz" %>
+                     <%#= content_tag(:li, link_to("Home", biz_path), :class => ([biz_path].include? request.path) ? "current" : nil) %>
+                    <%# else %>
+                     <%= content_tag(:li, link_to("How?", how_path), :class => ([how_path].include? request.path) ? "current" : nil) %>
+                     <%= content_tag(:li, link_to("Login/Sign-up", login_path), :class => ([login_path, session_path].include? request.path) ? "current" : nil) %>
+                    <%# end%> 
+                   <% end %> 
+
+                <%# end %>  
+                <% if logged_in? %>
+
+                    <% if current_user.profile && !current_user.biz? %>
+                   
+                        <%= content_tag(:li, link_to("Profile", profile_path), :class => ([profile_path].include? request.path) ? "current" : nil) %>
+
+                        <%#= content_tag(:li, link_to("Messages",'#'), :class => (["#"].include? request.path) ? "current" : nil) %>
+
+                        <%= content_tag(:li, link_to("Pending",pending_path), :class => ([pending_path].include? request.path) ? "current" : nil) %>
+
+
+                        <%#= content_tag(:li, link_to("Add Account", user_account_path), :class => ([user_account_path].include? request.path) ? "current" : nil) %>
+
+                        <%#= content_tag(:li, link_to("Manual Feed", manual_feed_path), :class => ([manual_feed_path].include? request.path) ? "current" : nil) if current_user.profile %>
+
+
+                    <% end %>
+                    <%= content_tag(:li, link_to('Sign Out', logout_path)) if logged_in? %>
+                <% end %>
+            </ul>
+        </div><!-- #header -->
+        <div>
+          <%#=render :partial => "/shared/message"%>
+        </div>  
+        <% content_tag :div, :id => "content" do %>
+            <%= @content_for_layout %>
+        <% end %>
+
+        <div id="footer">
+            <div>
+                Copyright <%=Time.now.year %> APayments Inc.<br>
+                2603 Camino Ramon Road, <br>San Ramon, CA 94583<br>
+                1.888.357.8531<br>
+                support@debtfriends.com<br>
+                            <span id="siteseal"><script type="text/javascript" src="https://seal.godaddy.com/getSeal?sealID=sFttugoIIeDDfI0jDyZ1okXuHP0ujr215fG83vcdEmrrR3rK2SgaGyFj"></script></span>
+
+<!--                 <img width="132" height="31" onclick="verifySeal();" src="https://seal.godaddy.com/images/3/siteseal_gd_3_h_l_m.gif" style="cursor:pointer;cursor:hand">
+ -->                
+                <%#= "<b>#{number_to_phone(Profile.first.phone.gsub(/\D+/, ''), :delimiter => "-")}</b>" if Profile.first %>
+            </div>
+            <% content_tag :ul do %>
+                <%= content_tag(:li, link_to('About', about_path,:target=>"_blank"))%>
+                <%= content_tag(:li, link_to('Help', help_path,:target=>"_blank"))%>
+                <%= content_tag(:li, link_to('Privacy', privacy_path,:target=>"_blank"))%>
+                <%= content_tag(:li, link_to('Rights',rights_path,:target=>"_blank"))%>
+                <%= content_tag(:li, link_to('Terms', terms_path,:target=>"_blank"))%>
+                <%#= content_tag(:li, link_to('Change Password', change_password_path)) if logged_in? and current_user? %>
+                <%#= content_tag(:li, link_to('Sign Out', logout_path)) if logged_in? %>
+            <% end %>
+        </div><!-- #footer -->
+    </div><!-- #layout -->
+
+    <% if flash[:error] or flash[:notice] %>
+      <% javascript_tag do %>
+          <% if flash[:error] %>
+            showNotification("<%= flash.now[:error] %>", 'error', 6000);
+          <% elsif flash[:notice] %>
+            showNotification("<%= flash.now[:notice] %>", 'notice', 6000);
+          <% end %>
+          <% flash.discard %>
+      <% end %>
+    <% end %>
+
+
+ <script type="text/javascript">
+
+ var _gaq = _gaq || [];
+ _gaq.push(['_setAccount', 'UA-38998026-1']);
+ _gaq.push(['_trackPageview']);
+
+ (function() {
+   var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+ })();
+
+</script>
+  
+
+
+  </body>
+</html>
+  

@@ -1,0 +1,22 @@
+<% content_tag :div, :class => "fixed-side-ctrls" do %>
+    <% content_tag :ul do %>
+
+    	<% if current_user.biz? %>
+          <%= content_tag(:li, content_tag(:span, link_to("Pending", biz_pending_path, :class => "w160px"), :class => "button green ".concat(([biz_pending_path].include? request.path) ? "current" : ""))) %>
+    	<% else %>
+          <%= content_tag(:li, content_tag(:span, link_to("Enter Debts", user_account_path, :class => "w160px"), :class => "button green ".concat(([user_account_path].include? request.path) ? "current" : ""))) %>
+        <% end %>
+
+        <% if current_user.biz? %>
+          <%= content_tag(:li, content_tag(:span, link_to("My Agreements", biz_accepted_path, :class => "w160px"), :class => "button green ".concat(([biz_accepted_path].include? request.path) ? "current" : ""))) %>
+        <%else%>
+          <%= content_tag(:li, content_tag(:span, link_to("My Agreements", agreements_path, :class => "w160px"), :class => "button green ".concat(([agreements_path].include? request.path) ? "current" : ""))) %>
+        <% end %>  
+
+        <% if current_user.biz? %>
+          <%= content_tag(:li, content_tag(:span, link_to("My Statistics", biz_statistics_path, :class => "w160px"), :class => "button green ".concat(([biz_statistics_path].include? request.path) ? "current" : ""))) %>
+        <%else%>
+          <%= content_tag(:li, content_tag(:span, link_to("My Statistics", statistics_path, :class => "w160px"), :class => "button green ".concat(([statistics_path].include? request.path) ? "current" : ""))) %>
+        <% end %>
+    <% end %>
+<% end %>

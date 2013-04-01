@@ -1,0 +1,80 @@
+<% if current_user.user_accounts %>
+  <% if current_user.user_accounts.size > 0 %>
+     <div id="consumers_list">
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th><%=link_to("Company Name", "javascript:void();") %></th>
+          <th><%=link_to("Account Number", "javascript:void();")%></th>
+          <th><%=link_to("Balance", "javascript:void();") %></th>
+          <th><%=link_to("Current Offer", "javascript:void();") %></th>
+          <th>Action</th>
+        </tr>
+        <% @total_bal = 0 %>
+        <% @user_all_acocunts.each_with_index do |user_account, i|%>
+          
+          <% @offer = Offer.offer_of_current_user_account(current_user.id,user_account.id,"") %>
+          <% @biz_offers_of_users = Offer.offer_of_current_user_account(current_user.id,user_account.id,"IS NULL") %>
+          <% if @offer && !@offer.empty? %>
+            <% @latest_offer = @offer.last %>
+            <tr id="feed_<%=user_account.id%>">
+              <td><%= user_account.company_name %></td>
+              <td>
+              	<%= user_account.account_no %>
+              </td>
+
+              <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+              <td>
+                <%= number_to_currency(@latest_offer.amount, :unit =>"&#36;", :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %>
+              </td>
+              <td>
+                 <% if @latest_offer.status.to_i == 2 %>
+                      <%= "Rejected" %>
+                    <% elsif @latest_offer.status.to_i == 1 %>
+                       <% if @latest_offer %> 
+                        <% if @latest_offer.payment && !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %>
+                            <%= "Paid" %>
+                        <% else %>   
+                          <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                      <% end %>                   
+                     <% end %>  
+                    <% else %>
+                      <%# if @offer.size <= 1 %>
+                        <%#= link_to "Start Offer",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                      <%# elsif @biz_offers_of_users.size <= 1 %>
+                        <%#= link_to "Pending",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                      <%# else %>  
+                        <%= link_to "Negotiate",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+
+                      <%# end %>  
+                    <% end %>
+
+              </td>
+              <!--<td>
+                <%#= link_to "delete",delete_debt_path(user_account.id),:confirm=>"Are you sure you want to delete?"  %>
+              </td> !-->
+            </tr>
+            <%@total_bal  = @total_bal + user_account.amount %>
+           <% end %> 
+        <% end %>
+        <tr>
+          <td>
+           <b>All</b>
+          </td>
+          <td>
+
+          </td>
+          <td>
+            <b>$<%= number_with_delimiter(@total_bal.ceil) %></b>
+          </td>
+          <td>
+          </td>
+          <td>
+          </td>
+        </tr>
+      </table>
+      
+  <% else %>
+    <b>No Data Found</b>
+  <% end %>
+    </div>
+<% end %>

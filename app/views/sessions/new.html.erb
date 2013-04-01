@@ -1,0 +1,30 @@
+<%= content_tag(:h1, "Sign In or Sign up. Debtfriends is 100% secure") %>
+
+<% form_tag session_path,:id=>"session_form" do  %>
+  <p class="ctrl">
+      <%= label_tag(:email, "My Email") %>
+      <%= text_field :user, :email, :class => "w180px" %>
+      <%= hidden_field_tag :submit_type,0 %>
+  </p>
+  <p class="ctrl">
+      <p><%= label_tag 'password' %>
+		 <%= password_field :user,:crypted_password,:maxlength=>16,:size=>26, :class => "w180px" %></p>
+		<em>Min. 8 characters not case sensitive.</em>
+  </p>
+  <p class="ctrl actions">
+      <span class="button green"><%= submit_tag("Go!") %></span>
+      <div class="forgot_pass" style="margin-top:-41px;margin-left:79px;"><%= link_to "Forgot Password?","javascript:;" %> </div>
+  </p>
+<% end %><br />
+ <div>
+    <%#= link_to(image_tag('consumer.gif', :width => "100%"), {:controller => '#', :action => '#'}) %>
+ </div>
+
+  <script>
+     jQuery(function() {
+        jQuery(".forgot_pass").click(function(){
+          jQuery("#submit_type").val(1);
+          jQuery("#session_form").submit();
+          });
+      });
+    </script>

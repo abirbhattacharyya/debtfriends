@@ -1,0 +1,48 @@
+    <%= render :partial => "/partials/user_dashboard" %>
+    <%= content_tag(:h1, ("Here are all the accounts that owe you money & their status")) %>
+
+     <div id="consumers_list">
+      <table border="1" class="t_border" width="70%" id="">
+        <tr>
+          <th><%=link_to("Company Name", "javascript:void();") %></th>
+          <th><%=link_to("Account Number", "javascript:void();")%></th>
+          <th><%=link_to("Balance", "javascript:void();") %></th> 
+          <th>Action</th>
+        </tr>
+        <% @company_users.each_with_index do |user_account, i| %>
+          
+          <% @user = user_account.user %>
+          <% if @user %>
+            <% @offer = Offer.all(:conditions=>["user_id = ? && user_account_id = ?",@user.id.to_i,user_account.id.to_i]) %>
+            <% @latest_offer = @offer.last %>
+            <% @paid_offer = Payment.find_by_offer_id(@latest_offer.id) %>
+              <tr id="feed_<%=user_account.id%>">
+                  <td><%= user_account.company_name %></td>
+                  <td>
+              	   <%= user_account.account_no %>
+                  </td>
+
+                  <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+                  <%= hidden_field_tag :user_type,"biz" %>
+                  <td>
+                    <% if @latest_offer.status.to_i == 2 %>
+                      <%= "Rejected" %>
+                    <% elsif @latest_offer.status.to_i == 1 %>
+                      <% if @latest_offer.payment %>
+                        <% if !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %> 
+                         <%= "Paid" %>
+                        <% else %>  
+                         <%= "Accepted" %>
+                        <% end %> 
+                      <% else %>
+                         <%= "Accepted" %>
+                      <% end %>    
+                    <% else %>
+                        <%= link_to "Negotiate",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
+                    <% end %>
+                  </td>
+              </tr>
+          <% end %>
+        <% end %>  
+      </table>     
+    </div>

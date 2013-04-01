@@ -1,0 +1,68 @@
+<div class="page-columns">
+    <div class="column half">
+
+        <div class="rounded">
+            <div class="info mh300px">
+
+                <h3>Awaiting for Response</h3>
+
+                <p class="param">
+                    <label><%#=current_user.feed_info.user.profile.name%> This settlement is on hold for your account # : </label>
+                    <span><%= @counter_offer.user_account.account_no %></span>
+                </p>
+                <p class="param">
+                    <label>Original amount due:</label>
+                    <span><%= number_to_currency(@counter_offer.user_account.amount, :precision => ((@counter_offer.user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <p class="param">
+                    <label>Starting Offer:</label>
+                    <span><%= number_to_currency(@merchant_offer.amount, :precision => ((@merchant_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <p class="param">
+                    <label>Last Offer made:</label>
+                    <span><%= number_to_currency(@counter_offer.amount, :precision => ((@counter_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <!--
+                <p class="param">
+                    <label>Option to repay as <%#= @feed.payment_term %> monthly payments of:</label>
+                    <span><%#= number_to_currency((@accepted_offer.amount/@feed.payment_term), :precision => (((@accepted_offer.amount/@feed.payment_term).to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                -->
+            </div><!-- .info -->
+            <div style="height: 5px"></div>
+            <!-- .controls -->
+            <div class="foot"></div>
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+    <div class="column half">
+
+        <div class="rounded blue">
+            <% form_tag "#" do %>
+            <div class="info mh365px">
+              <div>
+                <h3> Awaiting Reply From Your Creditors</h3>
+
+                <p class="param">
+                    <label>
+                            Thank you for starting your debt settlement process. We are waiting to hear back from the people you owe money to.
+                        As soon as they respond, we will email you an alert.
+                        Please also login to Debtfriends weekly to check on the status.
+                    </label>
+                </p>
+              </div><!-- .info -->
+              <!--<div>
+                <p class="param">
+                    <label>Click 'Agent' below to have a <%#=current_user.feed_info.user.profile.name%> representative call to make payment arrangements by phone.</label>
+                </p>
+              </div><!-- .info -->
+              <!--<div class="controls">
+                  <span class="button green on-blue"><%#= submit_tag("Agent") %></span>
+              </div><!-- .controls -->
+
+            <% end %>
+            <div class="foot"></div>
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+</div><!-- .columns -->

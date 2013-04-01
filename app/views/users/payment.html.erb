@@ -1,0 +1,21 @@
+<h1>Pay Now</h1>
+<!--<h2>If you would prefer to make the payment by phone, please call 1-800-557-2117.</h2> !-->
+<p>&nbsp;</p>
+
+<% payment_service_for @offer.id, PAYPAL_ACCOUNT,
+        :amount => @offer.amount, :currency => 'USD',
+        :service => :paypal do |service|
+
+    service.notify_url notify_url(:payment_id => @payment.id)  
+    service.return_url return_url(@payment.id)
+    service.cancel_return_url cancel_return_url(@payment.id) %>
+    
+    <input id="custom" name="custom" type="hidden" value="<%=@payment.id%>" />
+
+    <!-- display payment summary here -->
+    <div class="controls mh50px">
+      <span class="button green"><%= submit_tag 'Make Payment' %></span>
+    </div>  
+<% end %>
+
+<%#= error_messages_for :payment %>
