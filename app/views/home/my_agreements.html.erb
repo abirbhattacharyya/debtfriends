@@ -25,12 +25,12 @@
               <td>
                 <% if active_offer.payment %>
                   <% if active_offer.payment.status.to_i == 0 %>
-                    <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
+                    <%= link_to "Pay Now (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
                   <% else %>
                      <%= "Paid" %>
                   <% end %>  
                 <% else %>
-                  <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
+                  <%= link_to "Pay Now (Optional)",:controller=>"users",:action=>"show_account",:id=>active_offer.user_account.id %>
                 <% end %>
               </td>
           </tr>

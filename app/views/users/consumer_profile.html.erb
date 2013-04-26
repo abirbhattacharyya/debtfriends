@@ -29,12 +29,12 @@
       <%= f.text_field :ssn, :maxLength => 4, :class => "w180px", :onKeyPress => "return keyAllowed(event,'0123456789')" %>
   </p>
   <p class="ctrl">
-    <%= label_tag(:birthdate, "My Birthdate") %>
-	  <%= f.text_field :birthdate, :readonly=>true, :class => "w180px" %>
+      <%= label_tag(:birthdate, "My Birthday (e.g. 02/03/1980)") %>
+	  <%= f.text_field :birthdate, :value=>@birthdate, :class => "w180px" %>
+	  <em>format: MM/DD/YYYY</em>
   </p>
   <p class="ctrl actions">
       <span class="button green"><%= f.submit("Go!") %></span>
   </p>
-
 <% end %>
 

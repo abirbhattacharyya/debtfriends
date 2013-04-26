@@ -16,6 +16,7 @@
           <% @biz_offers_of_users = Offer.offer_of_current_user_account(current_user.id,user_account.id,"IS NULL") %>
           <% if @offer && !@offer.empty? %>
             <% @latest_offer = @offer.last %>
+            <% unless @latest_offer.status == "1" %>
             <tr id="feed_<%=user_account.id%>">
               <td><%= user_account.company_name %></td>
               <td>
@@ -28,24 +29,26 @@
               </td>
               <td>
                  <% if @latest_offer.status.to_i == 2 %>
-                      <%= "Rejected" %>
+                      <%= "None (No Deal)" %>
                     <% elsif @latest_offer.status.to_i == 1 %>
-                       <% if @latest_offer %> 
-                        <% if @latest_offer.payment && !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %>
-                            <%= "Paid" %>
-                        <% else %>   
-                          <%= link_to "Pay (Optional)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
-                      <% end %>                   
-                     <% end %>  
-                    <% else %>
-                      <%# if @offer.size <= 1 %>
-                        <%#= link_to "Start Offer",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
-                      <%# elsif @biz_offers_of_users.size <= 1 %>
-                        <%#= link_to "Pending",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
-                      <%# else %>  
-                        <%= link_to "Negotiate",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                       <%# if @latest_offer %> 
+                        <%# if @latest_offer.payment && !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %>
+                            <%#= "Paid" %>
+                        <%# else %>   
+                          <%#= link_to "Pay Now (Optional)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                          <%#= link_to "None (Pending)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
 
-                      <%# end %>  
+                      <%# end %>                   
+                     <%# end %>  
+                    <% else %>
+                      <% if @offer.size <= 1 %>
+                        <%= link_to "Start Offer",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                      <% elsif @offer.last.status.to_i == 0 && @offer.last.response.to_s == "counter" %>
+                        <%= link_to "None (Pending)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+                      <% else %>  
+                        <%= link_to "Negotiate (Pending)",:controller=>"users",:action=>"show_account",:id=>user_account.id %>
+
+                      <% end %>  
                     <% end %>
 
               </td>
@@ -54,6 +57,8 @@
               </td> !-->
             </tr>
             <%@total_bal  = @total_bal + user_account.amount %>
+            <% end%>
+            <%#@total_bal  = @total_bal + user_account.amount %>
            <% end %> 
         <% end %>
         <tr>
@@ -61,7 +66,7 @@
            <b>All</b>
           </td>
           <td>
-
+            <b>Total<b>
           </td>
           <td>
             <b>$<%= number_with_delimiter(@total_bal.ceil) %></b>
@@ -72,7 +77,7 @@
           </td>
         </tr>
       </table>
-      
+  <%# end%>      
   <% else %>
     <b>No Data Found</b>
   <% end %>

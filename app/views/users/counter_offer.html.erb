@@ -5,20 +5,43 @@
             <div class="info mh240px">
                  <p class="param">
                     <!--<label>This settlement is in process for your account #:</label> !-->
-                    <label><%= @latest_offer.user_account.company_name.camelize %> made another offer, for account #:</label>
+                    <label><%#= @latest_offer.user_account.company_name.camelize %><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>
+                      made an offer, for account #:
+                     <!--made another offer, for account #: !--></label>
                     <span><%= @latest_offer.user_account.account_no %></span>
                 </p>
+
+                <p><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>,
+                  
+                 <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span></p>
+                <p>Last 4 Of SSN = <%=@latest_offer.user_account.user.profile.ssn %></p>
 
                 <p class="param">
 
                     <lable>Original amount due :</lable>
                     <span><%= number_to_currency(@latest_offer.user_account.amount, :precision => ((@latest_offer.user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
-                <p class="param">
+
+<!--                 <%# if @consumer_offer %>
+                  <p class="param">
+                        <label>Last Consumer Offer:</label>
+                        <span><%#= number_to_currency(@consumer_offer.amount, :precision => ((@consumer_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                    </p>
+                <%# end %>    
+ -->
+                  <% if @all_merchant_offers.count > 1 %>
+                  <p class="param">
+                        <label>Your Last Offer:</label>
+                        <span><%= number_to_currency(@all_merchant_offers.last.amount.to_i, :precision => ((@all_merchant_offers.last.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                    </p>
+                <% end %>    
+ 
+
+<!--                 <p class="param">
                     <label>Starting Offer :</label>
                     <span><%= number_to_currency(@system_offer.amount, :precision => ((@system_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
-                <p class="param">
+ -->                <p class="param">
                     <label>Current Offer :</label>
                     <span><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
@@ -30,7 +53,8 @@
 
             <div style="height: 23px;"></div>
             <div class="info mh50px">
-            You can choose to accept the current offer of the company you owe money to, or continue to negotiate - Your choice
+            You can choose to accept the current offer from the
+            consumer, or continue to negotiate - your choice.  
             </div>
             <div class="foot"></div>
         </div><!-- .rounded -->
@@ -43,7 +67,7 @@
             <%= hidden_field_tag :submit_button, "offer" %>
             <div class="info mh300px">
               <div>
-                <h3>Want to accept the company's current offer?</h3>
+                <h3>Want to accept the consumer's current offer?</h3>
                 
                 <p class="param">
                     <label>Current Settlement Offer:</label>

@@ -1,0 +1,77 @@
+
+<h1>Thanks. We sent this settlement agreement to the consumer.
+</h1>
+<p>Remember, to make payment arrangements directly with the consumer.
+</p>
+
+<div class="page-columns">
+    <div class="column half">
+
+        <div class="rounded">
+            <div class="info mh300px">
+
+                <h3>Settlement Offer</h3>
+                <p>You have reached a settlement for</p>
+                <p>
+                  <span>Acount # :<%= @current_account.account_no %></span>
+                </p>
+
+                <p>
+                  <%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>,
+                </p>  
+                <p>
+                  <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span>
+                </p>
+
+                 <p>Last 4 Of SSN = <%=@latest_offer.user_account.user.profile.ssn %></p>
+
+                <p>
+                  <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span>
+                </p>
+
+                <p class="param">
+                    <label>Original amount due:</label>
+                    <span><%= number_to_currency(@current_account.amount, :precision => ((@current_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+                <p class="param">
+                    <label>Final settlement amount:</label>
+                    <span><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                </p>
+            </div><!-- .info -->
+            <div style="height: 5px"></div>
+            <div class="info mh50px">
+              Since the consumer <%#=@which_user_accepted_offer %> already agreed to this offer - you have successfully settled this account.
+            </div><!-- .controls -->
+            <div class="foot"></div>
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+    <div class="column half">
+
+        <div class="rounded blue">
+            <div class="info mh365px">
+              <div>
+                <h3>Settlement Offer</h3>
+                <p class="param">
+                    <label>Please follow-up directly with the consumer on your payment policy, the number of months you can stretch it over, etc.
+                    </label>
+                </p>
+              </div><!-- .info -->
+              <div class="controls">
+                
+              </div>      
+
+                              <span class="button green on-blue">
+                    <%= link_to "See Other Accounts", biz_pending_path %>
+                </span>
+
+
+              </div><!-- .info -->
+            <div class="foot"></div>  
+            </div>
+            <%# end %>
+            
+        </div><!-- .rounded -->
+
+    </div><!-- .column.half -->
+</div><!-- .columns -->

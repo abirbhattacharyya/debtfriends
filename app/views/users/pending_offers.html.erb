@@ -1,3 +1,4 @@
+<% unless @pending_offers.blank? %>
 <h1>Here are a list of your pending accounts
 </h1>
   <%= render :partial => "/partials/user_dashboard" %>
@@ -22,8 +23,12 @@
 
               <td><%= number_to_currency(pending_offer.amount, :unit =>"&#36;", :precision => ((pending_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
               <td>
-              	<%= link_to "Negotiate",:controller=>"users",:action=>"show_account",:id=>pending_offer.user_account.id %>
+                <% unless pending_offer.response == "counter" %>
+              	  <%= link_to "Negotiate",:controller=>"users",:action=>"show_account",:id=>pending_offer.user_account.id %>
               	<%#= link_to_remote("Delete", :url => {:controller => :users, :action => :destroy_feed, :id => feed.id}, :confirm => "Are you sure?") %>
+                <% else %>
+                  <%= link_to "None",:controller=>"users",:action=>"show_account",:id=>pending_offer.user_account.id %>
+                <% end%>
               </td>
           </tr>
          <% end %> 
@@ -35,3 +40,10 @@
   <% end %>
     </div>
 <% end %>
+<% else %>
+<h1>Here are a list of your pending accounts
+</h1>
+
+  <p>Nothing Pending, please add debts or start offers.</p>
+<% end %>
+

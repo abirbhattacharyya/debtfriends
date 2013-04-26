@@ -9,22 +9,28 @@
           <th><%=link_to("Balance", "javascript:void();") %></th>
           <th>Action</th>
         </tr>
-        <%  @company_users.each_with_index do |user_account, i|%>
+        <% @company_users.each_with_index do |user_account, i|%>
           <% @offer = Offer.all(:conditions=>["user_id = ? && user_account_id = ?",user_account.user_id,user_account.id]) %>
-          <% @latest_offer = @offer.last %>
-          <% if @latest_offer.status.to_i == 0 %>
-            <tr id="feed_<%=user_account.id%>">
-                <td><%= user_account.company_name %></td>
-                <td>
-              	  <%= user_account.account_no %>
-                </td>
+          <% unless @offer.count <= 1  %>
+            <% @latest_offer = @offer.last %>
+            <% if @latest_offer.status.to_i == 0 %>
+              <tr id="feed_<%=user_account.id%>">
+                  <td><%= user_account.company_name %></td>
+                  <td>
+              	    <%= user_account.account_no %>
+                  </td>
 
-                <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
-                <td>
-              	  <%= link_to "Negotiate",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id %>
-              	<%#= link_to_remote("Delete", :url => {:controller => :users, :action => :destroy_feed, :id => feed.id}, :confirm => "Are you sure?") %>
-                </td>
-            </tr>
+                  <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+                  <td>
+                    <% if @latest_offer.status == "0" && @latest_offer.response == "counter" %>
+                 	    <%= link_to "Negotiate",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id %>
+                    <% else %>  
+                      <%= link_to "None (Waiting For Consumer)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id %>
+                    <% end %>  
+                  	<%#= link_to_remote("Delete", :url => {:controller => :users, :action => :destroy_feed, :id => feed.id}, :confirm => "Are you sure?") %>
+                  </td>
+              </tr>
+            <% end %>  
           <% end %>  
         <% end %>
       </table>

@@ -2,6 +2,7 @@
 
 class User < ActiveRecord::Base
   has_one :profile, :dependent => :destroy
+  has_one :biz_company, :dependent => :destroy
   has_many :user_accounts, :dependent => :destroy
   has_many :offers, :dependent => :destroy
   has_many :payments, :dependent => :destroy

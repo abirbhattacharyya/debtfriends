@@ -20,6 +20,20 @@ class ApplicationController < ActionController::Base
     return true
   end
 
+  def check_age(birthday)
+   now = Time.now.utc.to_date
+   now.year - birthday.year - (birthday.to_date.change(:year => now.year) > now ? 1 : 0)
+  end
+
+
+  def check_date(date)
+    return false if date.strip.blank?
+    unless date.strip =~ /\b\d{1,2}[\/-]\d{1,2}[\/-]\d{4}\b/
+      return false
+    end
+    return true
+  end
+
   def check_biz_login  
     if logged_in? 
       redirect_to root_path unless current_user.biz?

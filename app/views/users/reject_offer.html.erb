@@ -9,16 +9,16 @@
                     msg = "Your offer is rejected" 
                     right_panel_msg = "Your offer is rejected" 
                  else
-                    msg = "You rejected the offer" 
-                    right_panel_msg = "We will let your creditor know you rejected the offer. It may be possible that you will re-enter the debt, and initiate the settlement process- at another time."
+                    msg = "You ended the settlement negotiations" 
+                    right_panel_msg = "We will let your creditor know, that you ended the settlement negotiations. If you so choose- please reenter the debt, and initiate the settlement process another time."
                  end
                 else
                   if @latest_offer.by_biz?
                     msg = "Your offer is rejected"
                     right_panel_msg = "You rejected the offer" 
                  else
-                    msg = "You rejected the offer" 
-                    right_panel_msg = "You rejected the offer" 
+                    msg = "You ended the settlement negotiations" 
+                    right_panel_msg = "We will let the consumer know, that you ended the settlement negotiations. They may choose to reenter the debt, and initiate the settlement process another time." 
                     #right_panel_msg = "You rejected the offer" 
                  end  
                 end 
@@ -32,6 +32,13 @@
 
                     <span><%= @current_account.account_no %></span>
                 </p>
+
+                <p><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>,
+                  
+                 <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span></p>
+                <p>Last 4 Of SSN = <%=@latest_offer.user_account.user.profile.ssn %></p>
+
+
                 <p class="param">
                     <label>Original amount due:</label>
                     <span><%= number_to_currency(@current_account.amount, :precision => ((@current_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
@@ -44,7 +51,7 @@
 
                  <% if @consumer_first_offer %>
                     <p class="param">
-                        <label>Next Offer:</label>
+                        <label>Last Offer:</label>
                         <span><%= number_to_currency(@consumer_first_offer.amount, :precision => ((@consumer_first_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                     </p>
                 <% end %>    

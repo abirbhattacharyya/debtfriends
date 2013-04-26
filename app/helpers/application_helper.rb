@@ -12,6 +12,8 @@ module ApplicationHelper
 
   end
 
+ 
+
    def month_options
 
     from = get_current_time.to_date

@@ -784,7 +784,7 @@ body .ui-tooltip {
 ----------------------------------*/
 .ui-widget {
 	font-family: Verdana,Arial,sans-serif;
-	font-size: 1.1em;
+	font-size: 11.5px; /*1.1em;*/
 }
 .ui-widget .ui-widget {
 	font-size: 1em;
@@ -809,6 +809,9 @@ body .ui-tooltip {
 	background: #cccccc url(images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
 	color: #222222;
 	font-weight: bold;
+}
+.ui-widget-header SELECT{
+	padding: 0px;
 }
 .ui-widget-header a {
 	color: #222222;

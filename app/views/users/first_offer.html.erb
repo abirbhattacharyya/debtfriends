@@ -6,10 +6,12 @@
 
                 <!--<h3><%#=current_user.feed_info.user.profile.name%> Did Not Accept Your Offer, But is Making a Counter-Offer</h3> !-->
                 <p class="param">
-                    <label><%#=current_user.feed_info.user.profile.name%> This offer is for <%=@current_account.company_name %> account # :</label>
+                    <label>This offer is for <%=@current_account.company_name %> account # :</label>
                     <span><%= @latest_offer.user_account.account_no %></span>
                 </p>
-                <p><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>, <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span></p>
+                <p><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>,
+                  
+                 <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span></p>
                 <p>Last 4 Of SSN = <%=@latest_offer.user_account.user.profile.ssn %></p>
                 <p class="param">
                     <label>Original amount due:</label>
@@ -45,10 +47,22 @@
             </div><!-- .info -->
 
             <div style="height: 23px;"></div>
-            <div class="info mh50px">
-            We recommend this offer based on industry data. Based on your last payment date, we think collectors are likely to accept offers in this ballpark. This way you can settle without any extra effort or hassle. But the final choice is yours - submit a lower offer if you want.
+            <% if @all_merchant_offers.count > 1 %>
+              <div  class="info mh50px">
+
+
+                
+                You can choose to accept the current offer from the
+                business  , or continue to negotiate - your choice.
+              </div>
+
+            <% else %>
+              <div class="info mh50px">
+                  We recommend this offer based on industry data. Based on your last payment date, we think collectors are likely to accept offers in this ballpark. This way you can settle without any extra effort or hassle. But the final choice is yours - submit a lower offer if you want.
 
             </div>
+
+            <% end %>   
 
 
             <div class="foot"></div>
@@ -64,10 +78,12 @@
             <div class="info mh300px">
               <div>
 
-                <h3><%#= @feed.first_name %> <%#= @feed.last_name %> Want to accept our recommended offer?</h3>
+
+                <h3><%= (@all_merchant_offers.count > 1) ? "Want to accept the current offer?" : "Want to submit the recommended offer?" %></h3>
                 
                 <p class="param">
-                    <label><%#=current_user.feed_info.user.profile.name%> Starting Settlement Offer:</label>
+                  <label><%= (@all_merchant_offers.count > 1) ? "Current Offer" : "Starting Offer" %></label>
+                    <!-- <label>Current Offer:</label> -->
                     <span style="margin-top:5px;"><b><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></b></span>
                     <label style="display: none">Or <%#= @feed.payment_term %> monthly payments of:</label>
                     <span style="display: none"><b><%#= number_to_currency((@counter_offer.amount/@feed.payment_term), :precision => (((@counter_offer.amount/@feed.payment_term).to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></b></span>
@@ -84,7 +100,7 @@
 
 
               </div><!-- .controls -->
-             <% if @all_merchant_offers.size < 2 %>
+             <%# if @all_merchant_offers.size < 2 %>
               <div id="new_offer_div">
                 <div>
                   <h3><%#= @feed.first_name %> <%#= @feed.last_name %> I want to make a lower offer</h3>
@@ -105,7 +121,7 @@
               </div><!-- .controls -->
 
               </div>
-              <% end %>
+              <%# end %>
               </div> 
              
             <div class="foot"></div>

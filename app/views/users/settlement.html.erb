@@ -1,4 +1,5 @@
-<h1>Thanks! Sent this settlement offer to the company you owe money to.</h1>
+<h1>Congratulations, you have reached a successful debt settlement.
+</h1>
 <p> Remember for now, you can choose to pay here or pay the company you owe money to directly</p>
 
 <div class="page-columns">
@@ -7,10 +8,12 @@
         <div class="rounded">
             <div class="info mh300px">
 
-                <h3>High Likelihood of Acceptance</h3>
+                <h3>Final Settlement</h3>
 
                 <p class="param">
-                    <label><%= @current_account.company_name %> will probably* accept this settlement for your account # : </label>
+                    <label>
+                      <%= @current_account.company_name.camelize %> has accepted this settlement for your account#:
+                    </label>
                     <span><%= @current_account.account_no %></span>
                 </p>
                 <p class="param">
@@ -18,13 +21,14 @@
                     <span><%= number_to_currency(@current_account.amount, :precision => ((@current_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
                 <p class="param">
-                    <label>Recommended settlement amount:</label>
+                    <label>Settlement amount:</label>
                     <span><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
             </div><!-- .info -->
             <div style="height: 5px"></div>
             <div class="info mh50px">
-              *Although there is a good chance of a settlement, at this recommended percentage, the settlement is contingent on final approval by the company you owe money to.
+              You have reached a settlement on this account. Please contact the company you owe money to, and be sure to pay on time.
+
             </div><!-- .controls -->
             <div class="foot"></div>
         </div><!-- .rounded -->
@@ -40,8 +44,8 @@
                     <label>
                       Click 'Pay Now' below to make payment from checking or debit/credit card account now.
                       <br /><br />
-                      You can schedule your payment plan today or any day within the next 30 days.
-                    </label>
+<!--                       You can schedule your payment plan today or any day within the next 30 days.
+ -->                    </label>
                 </p>
               </div><!-- .info -->
               <div class="controls">

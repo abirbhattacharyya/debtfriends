@@ -32,65 +32,80 @@ class UsersController < ApplicationController
   end
 
   def consumer_profile
+    begin
     @profile = current_user.profile
     @birthdate = @profile.birthdate.strftime('%m/%d/%Y')
+    age = check_age(@profile.birthdate)
+    if age > 98 || age < 18 
+      flash[:error] = "Please enter a valid date"
+      render :action => "consumer_profile"
+      return
+    end
+  rescue ArgumentError => e
+    flash[:error] = "Please enter a valid date"
+    render :action => "consumer_profile"
+    return
+  end  
   end
 
 
   def create_consumer_profile
     @profile = Profile.find_or_initialize_by_user_id(current_user.id) 
+#   @birthdate = (@profile.birthdate.nil?) ? "" : @profile.birthdate.strftime('%m/%d/%Y')
     @birthdate = @profile.birthdate.strftime('%m/%d/%Y') unless (@profile.birthdate.blank?)
 
     if request.post?
-    	@profile.attributes = params[:profile]
-		@error_message = ""
-      	if !params[:profile][:birthdate].blank? 
-		  if check_date(params[:profile][:birthdate])
+      if check_date(params[:profile][:birthdate])
+		    @profile.attributes = params[:profile]
 		    @profile.birthdate = Date.strptime(params[:profile][:birthdate], '%m/%d/%Y')
-			age = check_age(@profile.birthdate)
-			if age > 98 || age < 18 
-		      @error_message = "Please enter a valid date"
-			end
-	      else
-		    @error_message = "Please enter a valid date"
-		  end
-		  unless @error_message.blank?
-	      	@birthdate = "" #" params[:profile][:birthdate]
-		    flash[:error] = @error_message
-		    render :action => "consumer_profile"
-		    return
-		  end
-		end
+	    else
+        @birthdate = params[:profile][:birthdate]
+        flash[:error] = "Please enter a valid date"
+        render :action => "consumer_profile"
+        return
+      end
     end
 
-	if @profile.valid?
-		@new_record = @profile.new_record?
-		@profile.save
-      	@term_condition = true
-        flash[:notice] = "Profile Updated"
-		if @new_record
-          redirect_to user_account_path
-		else
+    if !params[:user_profile_id].blank?
+      if @profile.save
+          flash[:notice] = "Profile Updated"
+          @term_condition = true
           redirect_to profile_path
-		end
-    else
-	 	if @profile.errors.first[0] == "ssn"
-			flash[:error] = "Plese enter 4 digit SSN "
-			render 'consumer_profile'
-		else
-			flash[:error] = "Please enter your profile information"
-			render 'consumer_profile'
-		end   
-	end
-  rescue ArgumentError => e
-  	@birthdate = ""
+        else
+         if @profile.errors.first[0] == "ssn"
+           flash[:error] = "Plese enter 4 digit SSN "
+           render 'consumer_profile'
+         else  
+           flash[:error] = "Please enter your profile information"
+           render 'consumer_profile'
+         end   
+        end
+    else  
+      #@profile = Profile.new(params[:profile])
+      @profile.user_id = current_user.id
+      if @profile.save     
+        flash[:notice] = "Profile Updated"
+        @term_condition = true
+        redirect_to user_account_path()
+      else
+         if @profile.errors.first[0] == "ssn"
+           flash[:error] = "Plese enter 4 digit SSN "
+           render 'consumer_profile'
+         else  
+           #flash[:error] = "Please enter your profile information"
+           render 'consumer_profile'
+         end   
+      end
+    end
+    rescue ArgumentError => e
     flash[:error] = "Please enter a valid date"
     render :action => "consumer_profile"
+    return
   end
 
   def biz_dashboard
     if request.xhr?
-      @companies = UserAccount.find(:all,:conditions => ['company_name LIKE ?', params[:term]+"%"],:limit => 10, :group => 'company_name', :order => 'company_name ASC')
+      @companies = BizCompany.find(:all,:conditions => ['company_name LIKE ?', params[:term]+"%"],:limit => 10, :group => 'company_name', :order => 'company_name ASC')
       render :json => @companies.map(&:company_name)
     elsif request.post?
       @biz_company = BizCompany.new(params[:biz_company])
@@ -98,24 +113,12 @@ class UsersController < ApplicationController
         flash[:error] = "Please enter details of the company you are collecting for"
         render :template => "users/biz_company"
       else
-        @biz_company.user = current_user
-        @biz_company.save
-        #@biz_company = BizCompany.create(:user_id => current_user.id,:company_name=>params[:biz_company][:company_name])
+        @biz_company = BizCompany.create(:user_id => current_user.id,:company_name=>params[:biz_company][:company_name])
         @company_users = UserAccount.all(:conditions=>["company_name = ?",params[:biz_company][:company_name]])
       end
     else
-      if logged_in?
-        @user_com  =  BizCompany.find_by_user_id(current_user.id)
-        unless @user_com.nil?
-          @company_users = UserAccount.all(:conditions=>["company_name = ?",@user_com.company_name])
-        else
-          @biz_company = BizCompany.new
-          render :template => "users/biz_company" 
-        end  
-      end
-      #@biz_company = BizCompany.new
-      #render :template => "users/biz_company" 
-      #@company_users = UserAccount.all(:conditions=>["company_name = ?",params[:biz_company][:company_name]])
+      @biz_company = BizCompany.new
+      render :template => "users/biz_company" 
     end
   end
 
@@ -179,8 +182,8 @@ class UsersController < ApplicationController
     @offers = current_user.offers
     @user_accounts = @offers.map(&:user_account_id).uniq
     @user_accounts.each do |pending_user_account|
-	    status_sum = @offers.map{|o| o.status.to_i if(o.user_account_id == pending_user_account)}.compact.inject(:+)
-	    #render :text => status_sum.inspect and return false
+	  status_sum = @offers.map{|o| o.status.to_i if(o.user_account_id == pending_user_account)}.compact.inject(:+)
+	  #render :text => status_sum.inspect and return false
       @counter_offers = @offers.find_all{|o| o if(o.status.eql?("0") and o.user_account_id == pending_user_account and o.response.eql?("counter"))}
       if status_sum == 0 and @counter_offers.count > 0 
         @pending_offers << @offers.find_all{|po| po.user_account_id == pending_user_account}.last
@@ -193,7 +196,7 @@ class UsersController < ApplicationController
   end  
   
   def biz_show_account
-   begin
+    begin
     @current_account = UserAccount.find(params[:id])
     session[:account_id] = params[:id]
 
@@ -209,6 +212,7 @@ class UsersController < ApplicationController
     @all_merchant_offers = Offer.offer_of_current_user_account(@account_user.id,@current_account.id,"IS NULL")
 
     @system_offer = Offer.offer_of_current_user_account(@account_user.id,@current_account.id,"IS NULL").first
+
 
     case @latest_offer.status.to_i
     when 1
@@ -353,12 +357,11 @@ class UsersController < ApplicationController
           if @any_other_offers.size > 1
             @any_other_offers.each do |other_offer|
               other_offer.response = "expire"                            
-              @which_user_accept_offer = "biz"
               other_offer.save
             end
           end  
           @offer = Offer.create(:user_id=>@account_user.id,:user_account_id=>params[:current_account_id],:amount=>@offer.amount,:status=>Offer::OFFER_STATUS[:active])
-          redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id],:accepted_user => @which_user_accept_offer
+          redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
 
         when 2
           @update_status = @offer.status_update(@return_status)
@@ -370,19 +373,21 @@ class UsersController < ApplicationController
           amount = params[:offer].gsub(/\D+/, '')
 
           if @biz_offers.count <=1 
-            if amount.to_i <= @consumer_offers.last.amount.to_i || amount.to_i > @current_account.amount.to_i
+            if amount.to_i < @consumer_offers.last.amount.to_i || amount.to_i > @current_account.amount.to_i
               flash[:notice] = "Please offer more than Consumer first offer and less than Original amount"
               redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
             else
               @counter_offer = Offer.create({:user_id=>@offer.user_id,:user_account_id=>@offer.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending]})
-              UserMailer.deliver_update_notification_from_biz(@account_user)
               redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
+
+              UserMailer.deliver_update_notification_from_biz(@account_user)
             end
           else
             if @offer &&  amount.to_i < @biz_offers.last.amount.to_i
               @counter_offer = Offer.create({:user_id=>@offer.user_id,:user_account_id=>@offer.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending]})
-              UserMailer.deliver_update_notification_from_biz(@account_user)
               redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
+
+              UserMailer.deliver_update_notification_from_biz(@account_user)
             else
               flash[:notice] = "Please make sure your offer is lower than your last offer"
               redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
@@ -390,8 +395,7 @@ class UsersController < ApplicationController
           end
         else
           flash[:error] = "Please make an offer"
-          #redirect_to root_path        
-          redirect_to :controller=>"users",:action=>"biz_show_account",:id=>session[:account_id]
+          redirect_to root_path        
         end
         #   amount = params[:offer].gsub(/\D+/, '')
         #   if @offer
@@ -428,27 +432,24 @@ class UsersController < ApplicationController
             @any_other_offers.each_with_index do |other_offer,index|
               index = index + 1
               if index < @any_other_offers.size
-                @which_user_accept_offer = "consumer"
                 other_offer.response = "expire"                            
                 other_offer.save
               end  
             end
           @payment = @offer.payment || Payment.create(:offer_id => @offer.id,:amount=>@offer.amount,:status=>Payment::PAYMENT_STATUS[:pending],:transaction_id => "",:user_id=>current_user.id)
           @update_status = @offer.status_update(@return_status)
-          UserMailer.deliver_update_notification_from_biz(current_user)  
+
           flash[:notice] = "Offer Accepted "  
-          redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id],:accepted_user => @which_user_accept_offer
+          redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]
          else
           amount = @any_other_offers.last.amount
           @last_offer = Offer.offer_of_current_user_account(current_user,@current_user_account,"").last
           @counter_offer = Offer.create({:user_id=>@any_other_offers.last.user_id,:user_account_id=>@any_other_offers.last.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending],:response=>"counter"})
-          UserMailer.deliver_update_notification_from_biz(current_user)
           redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]
          end
         when 2
           @update_status = @offer.status_update(@return_status)
           params[:data] = @update_status
-          UserMailer.deliver_update_notification_from_biz(current_user)
           redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]
         else
           puts "something wrong"  
@@ -461,33 +462,25 @@ class UsersController < ApplicationController
 
           @offer = Offer.offer_of_current_user_account(current_user,@current_user_account,"")
           @consumer_offers = Offer.counter_offer_of_current_user_account(current_user,@current_user_account)
-          @merchant_offer =  Offer.offer_of_current_user_account(current_user,@current_user_account,"Is NULL")
-          @last_merchant_offer = @merchant_offer.last
 
           @last_offer = @offer.last
 
           if @offer && @offer.count <= 1
-            if amount.to_i == @last_offer.amount.to_i 
-              flash[:notice] = "Please offer more than last time- or Yes to agree or No to end"
-              redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]
-            elsif amount.to_i > @last_offer.amount.to_i 
+            if amount.to_i >= @last_offer.amount.to_i 
               amount = @last_offer.amount
               @counter_offer = Offer.create({:user_id=>@last_offer.user_id,:user_account_id=>@last_offer.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending],:response=>"counter"})                
-              UserMailer.deliver_update_notification_from_biz(current_user)
               flash[:notice] = "We sent the lower (recommended) offer to your creditor"
               redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]               
             else
               @counter_offer = Offer.create({:user_id=>@last_offer.user_id,:user_account_id=>@last_offer.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending],:response=>"counter"})
-              UserMailer.deliver_update_notification_from_biz(current_user)
               redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]               
             end
           else
-            if @offer && amount.to_i <= @consumer_offers.last.amount.to_i || amount.to_i > @user_account_data.amount.to_i || amount.to_i >= @last_merchant_offer.amount.to_i  
+            if @offer && amount.to_i <= @consumer_offers.last.amount.to_i || amount.to_i > @user_account_data.amount.to_i
               flash[:notice] = "Please offer more than last time- or Yes to agree or No to end"
               redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]
             else
               @counter_offer = Offer.create({:user_id=>@last_offer.user_id,:user_account_id=>@last_offer.user_account_id,:amount=>amount,:status=>Offer::OFFER_STATUS[:pending],:response=>"counter"})
-              UserMailer.deliver_update_notification_from_biz(current_user)
               redirect_to :controller=>"users",:action=>"show_account",:id=>session[:account_id]              
             end              
           end

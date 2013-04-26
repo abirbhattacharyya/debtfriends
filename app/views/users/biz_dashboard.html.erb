@@ -14,35 +14,49 @@
           <% @user = user_account.user %>
           <% if @user %>
             <% @offer = Offer.all(:conditions=>["user_id = ? && user_account_id = ?",@user.id.to_i,user_account.id.to_i]) %>
-            <% @latest_offer = @offer.last %>
-            <% @paid_offer = Payment.find_by_offer_id(@latest_offer.id) %>
-              <tr id="feed_<%=user_account.id%>">
-                  <td><%= user_account.company_name %></td>
-                  <td>
-              	   <%= user_account.account_no %>
-                  </td>
+            <% @biz_offers = Offer.all(:conditions=>["user_id = ? && user_account_id = ? && response IS NULL",@user.id.to_i,user_account.id.to_i]) %>
 
-                  <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
-                  <%= hidden_field_tag :user_type,"biz" %>
-                  <td>
-                    <% if @latest_offer.status.to_i == 2 %>
-                      <%= "Rejected" %>
-                    <% elsif @latest_offer.status.to_i == 1 %>
-                      <% if @latest_offer.payment %>
-                        <% if !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %> 
-                         <%= "Paid" %>
-                        <% else %>  
-                         <%= "Accepted" %>
+            <% @latest_offer = @offer.last %>
+            <% if @latest_offer && @latest_offer.status.to_i !=0 || @offer.count > 1 %>
+              <% @paid_offer = Payment.find_by_offer_id(@latest_offer.id) %>
+                <tr id="feed_<%=user_account.id%>">
+                    <td><%= user_account.company_name %></td>
+                    <td>
+              	     <%= user_account.account_no %>
+                    </td>
+
+                    <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
+                    <%= hidden_field_tag :user_type,"biz" %>
+                    <td>
+                      <% if @latest_offer.status.to_i == 2 %>
+                        <%= "None (No Deal)" %>
+                      <% elsif @latest_offer.status.to_i == 1 %>
+                        <% if @latest_offer.payment %>
+                          <% if !@latest_offer.payment.transaction_id.nil? && @latest_offer.payment.status.to_i == 1 %> 
+                           <%= "Paid" %>
+                          <% else %>  
+                            <%#= link_to "Negotiate (Pending)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
+                          <%= link_to "None (Under My Agreement)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
+
+                          <% end %> 
+                        <% else %>
+                           <%= "None (Under My Agreement)" %>
+                        <% end %>    
+                      <%# else %>
+                      <%# params[:data] = @latest_offer %>
+                      <%# exit %>
+                        <%elsif @offer.last.status.to_i == 0 && @offer.last.response.to_s == "counter" %>
+                          <%= link_to "Negotiate (Pending)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
+                        <% else %>
+                          <%= link_to "Pending (Awaiting Consumer Response)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
                         <% end %> 
-                      <% else %>
-                         <%= "Accepted" %>
-                      <% end %>    
-                    <% else %>
-                        <%= link_to "Negotiate",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
-                    <% end %>
-                  </td>
-              </tr>
-          <% end %>
-        <% end %>  
-      </table>     
-    </div>
+                      <%# end %>
+                    </td>
+                </tr>
+            <% end %>    
+            <% else %>
+            <% exit %>
+            <% end %>
+          <% end %>  
+        </table>     
+      </div>

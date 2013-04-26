@@ -18,11 +18,11 @@ class HomeController < ApplicationController
           @profile = Profile.new
   		    render :template => "/users/consumer_profile",:id=>"test"
   		  end  
-       else
+      else
         redirect_to biz_dashboard_path
-       end   
+      end   
   	else
-     if request.path == "/biz"
+     if request.path == "/biz3795"
       redirect_to biz_path
      else 
      end
@@ -33,7 +33,8 @@ class HomeController < ApplicationController
   end
 
   def my_agreements
-    @active_offers = Offer.all(:conditions => ["user_id = ? && response IS NULL && status = 1", current_user.id])
+    #@active_offers = Offer.all(:conditions => ["user_id = ? && response IS NULL && status = 1", current_user.id])
+    @active_offers = Offer.all(:conditions => ["user_id = ? && status = 1", current_user.id])
   end
 
   def biz_my_agreements
@@ -100,7 +101,12 @@ class HomeController < ApplicationController
     @total_debt = 0
     @total_offer_amount = 0
     @chart_h2_title = "Here are your potential % & $ savings"
+
     @accept_offer = Offer.all(:conditions => ["user_id = ? && status=1", current_user.id])
+    @total_offer = Offer.all(:conditions => ["user_id = ?", current_user.id],:group => :user_account_id)
+    @account_debt_amount = 0 
+
+
     unless @accept_offer.blank?
       @accept_offer.each do |offer|
         @debt = offer.user_account
@@ -109,7 +115,7 @@ class HomeController < ApplicationController
         @total_offer_amount = @total_offer_amount + offer.amount.to_i
       end   
       @save_amount_in_dollar = @total_debt - @total_offer_amount     
-      @save_amount_in_percentage = (100 * @total_offer_amount) / @total_debt
+      @save_amount_in_percentage = (100 * @save_amount_in_dollar) / @total_debt
     else
       @save_amount_in_dollar = 0
       @save_amount_in_percentage = 0.00

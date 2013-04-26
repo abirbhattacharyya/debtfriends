@@ -10,25 +10,32 @@
                     <label>This settlement is on hold for your account #:</label>
                     <span><%= @current_account.account_no %></span>
                 </p>
+
+                <p><%=@latest_offer.user_account.user.profile.first_name.camelize  %>  <%=@latest_offer.user_account.user.profile.last_name.camelize  %>,
+                  
+                 <span>DOB = <%=@latest_offer.user_account.user.profile.birthdate.strftime("%m/%d/%Y") %></span></p>
+                <p>Last 4 Of SSN = <%=@latest_offer.user_account.user.profile.ssn %></p>
+
+
                 <p class="param">
                     <label>Original amount due:</label>
                     <span><%= number_to_currency(@current_account.amount, :precision => ((@current_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                 </p>
-                <p class="param">
+<!--                 <p class="param">
                     <label>Starting Offer:</label>
                     <span><%= number_to_currency(@system_offer.amount, :precision => ((@system_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
-                </p>
+                </p> -->
 
-                <% if @consumer_first_offer %>
+                <% if @consumer_offer %>
                     <p class="param">
-                        <label>Consumer Offer:</label>
-                        <span><%= number_to_currency(@consumer_first_offer.amount, :precision => ((@consumer_first_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
+                        <label>Last Consumer Offer:</label>
+                        <span><%= number_to_currency(@consumer_offer.amount, :precision => ((@consumer_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                     </p>
                 <% end %>    
 
                  <% if @all_merchant_offers.size > 1 %>
                     <p class="param">
-                    <label>Your Offer:</label>
+                    <label>Your Current Offer:</label>
                     <span><%= number_to_currency(@latest_offer.amount, :precision => ((@latest_offer.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 2)) %></span>
                     </p>
                 <% end %>
@@ -42,14 +49,34 @@
 
         <div class="rounded blue">
             <% form_tag "#" do %>
+            <% if current_user.biz? %>
             <div class="info mh365px">
               <div>
-                <h3> The consumer may take several weeks to respond as they gather up money for the settlement. We will send you email alerts. Please login to Debtfriends weekly to check the status</h3>
+                <h3>We will send you email alerts. Please login to Debtfriends weekly to check the status</h3>
                
+                <span class="button green on-blue">
+                    <%= link_to "See Other Accounts", root_path %>
+                </span>
+            </div><!-- .info -->
+            <% end %>
+
+              <% unless current_user.biz? %>
+              <div class="info mh365px">
+                <h3> Awaiting Reply From Your Creditors</h3>
+
                 <p class="param">
-                   
+                    <label>
+                        Thank you for starting your debt settlement process. We are waiting to hear back from the people you owe money to.
+                        As soon as they respond, we will email you an alert.
+                        Please also login to Debtfriends weekly to check on the status.
+                    </label>
                 </p>
-              </div><!-- .info -->
+                <span class="button green on-blue">
+                    <%= link_to "See More Accounts", pending_path %>
+                </span>
+            </div><!-- .info -->
+            <% end %>
+
              
             </div>
             <% end %>

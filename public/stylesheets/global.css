@@ -403,6 +403,7 @@ INPUT[type="submit"] {
         }
 
 
+
         .sbox .photo IMG {
             border: 1px solid #405f9f;
             }
@@ -873,7 +874,10 @@ padding: 10px;
     border: thin solid #DDDDDD;
     /*text-align: right;*/
 }
-
+A.alter-link {
+    line-height: 12px;
+    vertical-align: bottom;
+    }
 
 /*
 .disabled label

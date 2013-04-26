@@ -8,7 +8,16 @@ class UserMailer < ActionMailer::Base
   end  
 
   def update_notification_from_biz(user,sent_on = Time.now)
-  	subject    'You have an update on Debtfriends'
+  	subject    'You have new information on Debtfriends.'
+    recipients  user.email #consumer's email
+    from       'support@debtfriends.com'
+    body       :user => user
+    @user = user
+    content_type 'text/html'
+  end
+
+  def update_notification_from_consumer(user,sent_on = Time.now)
+    subject    'You have new information on Debtfriends.'
     recipients  user.email #consumer's email
     from       'support@debtfriends.com'
     body       :user => user

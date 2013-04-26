@@ -27,6 +27,10 @@ class Offer < ActiveRecord::Base
     Offer.all(:conditions => ["user_id = ? && response IS NULL", current_user.id])
   end
 
+  def self.consumer_pending_offers(current_user)
+    Offer.all(:conditions => ["user_id = ? && response = ?", current_user.id,"counter"])
+  end
+
   def self.offer_of_current_user_account(current_user,user_account_id,response)
     if response == "IS NULL"
       Offer.all(:conditions => ["user_id = ? && user_account_id =? && response IS NULL", current_user,user_account_id])

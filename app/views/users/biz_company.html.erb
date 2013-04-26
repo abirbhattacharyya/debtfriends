@@ -1,14 +1,45 @@
-<%= content_tag(:h1, "Please select the company that you are collecting for") %>
+<%= content_tag(:h1, "Please tell us the details of the company you are collecting for. Thanks!") %>
 
 <% form_for :biz_company, :url => biz_dashboard_path, :html => {} do || %>
 
   <p class="ctrl">
-    <%= label_tag(:company_name, "Company") %>
-    <%= select :biz_user,:company_name,@all_company %>
+    <%= label_tag(:company_name, "Name Of Your Company") %>
+    <%#= select :biz_user,:company_name,@all_company %>
+    <%= text_field :biz_company, :company_name,:class => "w180px" %>
   </p>
+
+  <p class="ctrl">
+    <%= label_tag(:name, "Your Full Name") %>
+    <%= text_field :biz_company, :name,:class => "w180px" %>
+  </p>
+  <p class="ctrl">
+    <%= label_tag(:title, "Your Title") %>
+    <%= text_field :biz_company, :title,:maxlength=>14,:class => "w180px" %>
+  </p>
+  <p class="ctrl">
+    <%= label_tag(:phone, "Your Phone #") %>
+    <%= text_field :biz_company,:phone,:maxLength=>14,
+     :class => "w180px", :onKeyPress => "return keyAllowed(event,'0123456789.-()')" %>
+  </p>
+
+  <p class="ctrl">
+    <%= label_tag(:manager, "Your Manager's Name") %>
+    <%= text_field :biz_company,:manager,:class => "w180px" %>
+  </p>
+
 
   <div style="height:40px;"></div>
   <span class="button green"><%= submit_tag("Go!") %></span>
+
+<% end %>
+<% javascript_tag do %>
+
+jQuery(document).ready(function(){
+	jQuery("#biz_company_company_name").autocomplete( {
+		source: jQuery("#biz_company_company_name").val(),
+		mustMatch : false
+	});
+});
 
 <% end %>
 

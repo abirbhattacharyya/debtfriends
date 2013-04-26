@@ -28,17 +28,20 @@ end
 
                 <td><%= number_to_currency(user_account.amount, :unit =>"&#36;", :precision => ((user_account.amount.to_s.reverse.match(/\b0[.](.*?)/)) ? 0 : 1)) %></td>
                 <td>
-					<% status_msg = "Final Offer" %>
+
+					<%# status_msg = "Final Offer" %>
                     <% if offer.status.to_i == 2 %>
 					  <% status_msg = "Rejected" %>
                     <% elsif offer.status.to_i == 1 %>
                       <% if offer.payment %>
                         <% if !offer.payment.transaction_id.nil? && offer.payment.status.to_i == 1 %> 
-					  	 <% status_msg = "Paid" %>
-                        <% end %> 
-                      <% end %>    
+					  	              <% status_msg = "Paid" %>
+                        <% else %>
+                         <%= link_to "None (Under My Agreement)",:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz" %>
+                        <% end %>       
+                      <% end %>                     
                     <% else %>
-					  	<% status_msg = link_to("Negotiate",url_for(:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz")) %>
+					  	        <% status_msg = link_to("Negotiate",url_for(:controller=>"users",:action=>"biz_show_account",:id=>user_account.id,:type=>"biz")) %>
                     <% end %>
 					<%= status_msg %>
                 </td>
