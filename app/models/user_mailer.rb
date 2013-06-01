@@ -7,6 +7,16 @@ class UserMailer < ActionMailer::Base
     content_type 'text/html'
   end  
 
+  def details_of_new_user(new_user,sent_on = Time.now)
+    subject    'You have New User on Debtfriends.'
+    #recipients  'tim@apayments.com'
+    bcc         'tim@apayments.com'
+    from       'support@debtfriends.com'
+    body       :new_user => new_user
+    @new_user = new_user
+    content_type 'text/html'
+  end
+
   def update_notification_from_biz(user,sent_on = Time.now)
   	subject    'You have new information on Debtfriends.'
     recipients  user.email #consumer's email

@@ -65,7 +65,14 @@ class UsersController < ApplicationController
 
 	if @profile.valid?
 		@new_record = @profile.new_record?
-		@profile.save
+    @old_profile = Profile.find_by_user_id(current_user.id)
+    if @old_profile.nil?
+      @profile.save
+      UserMailer.deliver_details_of_new_user(@profile)         
+    else
+      @profile.save
+    end
+
       	@term_condition = true
         flash[:notice] = "Profile Updated"
 		if @new_record
